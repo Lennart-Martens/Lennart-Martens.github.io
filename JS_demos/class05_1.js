@@ -31,8 +31,7 @@ function init() {
 	scene.background = environmentMap;
 
 	const headphoneTexture = new THREE.TextureLoader().load('models/headphone.png');
-	headphoneTexture.colorSpace = THREE.SRGBColorSpace;
-	const headphoneMaterial = new THREE.MeshStandardMaterial({ map: headphoneTexture });
+	const headphoneMaterial = new THREE.MeshMatcapMaterial({ map: headphoneTexture });
 
 	const loader = new OBJLoader();
 	// model

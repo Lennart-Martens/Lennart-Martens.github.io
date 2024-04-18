@@ -20,23 +20,23 @@ if (!gl) {
 
 // Define the vertices for the triangle
 const vertices = new Float32Array([
-    // Make a hexagon
+    // A hexagon, scaled for a 16:9 screen
     // Triangle 1
-    0.25, 0.43, 0,
-    0.25, -0.43, 0,
-    0.5, 0, 0,
+    0.1125, 0.345, 0,
+    0.1125, -0.345, 0,
+    0.225, 0, 0,
     // Triangle 2
-    -0.25, 0.43, 0,
-    -0.25, -0.43, 0,
-    -0.5, 0, 0,
+    -0.1125, 0.345, 0,
+    -0.1125, -0.345, 0,
+    -0.225, 0, 0,
     // Triangle 3
-    0.25, 0.43, 0,
-    -0.25, 0.43, 0,
-    -0.25, -0.43, 0,
+    0.1125, 0.345, 0,
+    -0.1125, 0.345, 0,
+    -0.1125, -0.345, 0,
     // Triangle 4
-    -0.25, -0.43, 0,
-    0.25, -0.43, 0,
-    0.25, 0.43, 0
+    -0.1125, -0.345, 0,
+    0.1125, -0.345, 0,
+    0.1125, 0.345, 0
 ]);
 
 // Create a buffer and put the vertices in it
@@ -49,15 +49,14 @@ const vsSource = `
 attribute vec3 a_position;
 uniform float uTimeVert;
 void main() {
-    mat3 matrixY;
+    mat4 matrixT;
     // column order
-    matrixY[0] = vec3(cos(uTimeVert), 0.0, sin(uTimeVert)); // first column
-    matrixY[1] = vec3(0.0, 1.0, 0.0); // second column
-    matrixY[2] = vec3(-sin(uTimeVert), 0.0, cos(uTimeVert));
-    vec3 translation = vec3(0.5*sin(uTimeVert), 0.5*cos(uTimeVert), 0);
-    //vec3 transformedP = a_position;
-    vec3 transformedP = matrixY * a_position + translation;
-    gl_Position = vec4(transformedP, 1.0);
+    matrixT[0] = vec4(cos(uTimeVert), 0.0, sin(uTimeVert), 0);
+    matrixT[1] = vec4(0.0, 1.0, 0.0, 0);
+    matrixT[2] = vec4(-sin(uTimeVert), 0.0, cos(uTimeVert), 0);
+    matrixT[3] = vec4(0.5*sin(uTimeVert), 0.5*cos(uTimeVert), 0, 1);
+    vec4 position = vec4(a_position, 1.0);
+    gl_Position = matrixT * position;
 }
 `;
 
@@ -69,18 +68,11 @@ const fsSource = `
     uniform float uTimeFrag;
     uniform vec2 screenSize; // screen resolution.
     void main() {
-        float colorR = abs(cos(uTimeFrag  * 2.0));
-        float pixelCordX = gl_FragCoord.x/screenSize.x;
-        float pixelCordY = gl_FragCoord.y/screenSize.y;
-        vec2 cord = vec2(pixelCordX, pixelCordY);
-        mat2 matrix;
-        float timeNew = uTimeFrag;
-        matrix[0] = vec2(cos(timeNew), sin(timeNew));
-        matrix[1] = vec2(-sin(timeNew), cos(timeNew));
-        cord = matrix * cord;
-        float colorG = abs(sin(cord.x * 30.0));
-        float colorB = abs(cos(cord.y * 30.0));
-        gl_FragColor = vec4(colorR, colorG, colorB, 1.0);  // Red color
+        // RGB values circle the color wheel every two cycles
+        float colorR = sin(uTimeFrag*0.6)+0.5;
+        float colorG = sin(uTimeFrag*0.6+1.333*3.14)+0.5;
+        float colorB = sin(uTimeFrag*0.6+0.667*3.14)+0.5;
+        gl_FragColor = vec4(colorR, colorG, colorB, 1.0);
     }
 `;
 

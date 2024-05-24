@@ -18,7 +18,7 @@ const directionLight = new THREE.DirectionalLight(0xffffff, 1)
 directionLight.position.set(0, 0, 10)
 scene.add(directionLight)
 
-const ambientLight = new THREE.AmbientLight(0xffffff, .1); // white light at 50% intensity
+const ambientLight = new THREE.AmbientLight(0xffffff, .1);
 scene.add(ambientLight)
 
 // load textures
@@ -40,7 +40,7 @@ var controls = new OrbitControls(camera, renderer.domElement);
 // Adjust control settings if needed
 controls.minDistance = 1;
 controls.maxDistance = 10;
-controls.enablePan = true;
+controls.enablePan = false;
 
 // Animation loop
 function animate() {
